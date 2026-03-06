@@ -190,6 +190,22 @@ app.put("/books", async (req: Request, res: Response) => {
   res.send(updatedBooks);
 });
 
-app.delete("/books", async (req: Request, res: Response) => {
+app.delete("/books/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
   const books = await readBooks();
+
+  const foundedBook = books.find((book) => String(book.id) === id);
+
+  if (!foundedBook) {
+    res.status(404).send({ message: "Not Found" });
+    return;
+  }
+
+  const filteredBooks = books.filter((book) => {
+    String(book.id) !== id;
+  });
+
+  writeBook(filteredBooks);
+
+  res.status(200).send({ message: "Successfully", writeBook });
 });
